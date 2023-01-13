@@ -10,6 +10,7 @@
 // -----------------------------------------------------------------------------
 
 //--INCLUDES--//
+#include <conio.h>
 #include <iostream>
 #include <windows.h>
 #include <vector>
@@ -19,7 +20,7 @@ using namespace std;
 
 // -----------------------------------------------------------------------------
 
-vector<bool> keys(5);
+vector<bool> gKeys(5);
 // https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 // 0x25 - ARROW LEFT
 // 0x27 - ARROW RIGHT
@@ -29,12 +30,13 @@ vector<bool> keys(5);
 
 constexpr int gGridWidth = 60;
 constexpr int gGridHeight = 30;
+constexpr char gSymbol = -2;
 char gGameGrid[gGridHeight][gGridWidth];
 
-int xPos = 15;
-int yPos = 15;
+int g_xPos = 15;
+int g_yPos = 15;
 
-bool gameover = false;
+bool gGameover = false;
 
 // -----------------------------------------------------------------------------
 
@@ -87,77 +89,90 @@ int main()
 		}
 	}
 
-	gGameGrid[xPos][yPos] = 'A';
+	gGameGrid[g_xPos][g_yPos] = gSymbol;
 
 	drawGameGrid();
 
-	while (!gameover)
+	while (!gGameover)
 	{
 		// ---- input
-		for (uint32_t k = 0; k < keys.size(); ++k)
+		for (uint32_t k = 0; k < gKeys.size(); ++k)
 		{
-			keys[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x25\x27\x28\x26\x1B"[k]))) != 0;
+			gKeys[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x25\x27\x28\x26\x1B"[k]))) != 0;
 		}
 
 		// want to move left
-		if (keys[0])
+		if (gKeys[0])
 		{
-			gGameGrid[xPos][yPos] = ' ';
-			--yPos;
-			if (yPos <= 0)
+			gGameGrid[g_xPos][g_yPos] = ' ';
+			--g_yPos;
+			if (g_yPos < 0)
 			{
-				yPos = 0;
+				g_yPos = 0;
 			}
-			gGameGrid[xPos][yPos] = 'A';
-			drawGameGrid();
+			else
+			{
+				gGameGrid[g_xPos][g_yPos] = gSymbol;
+				drawGameGrid();
+			}
 		}
 
 		// want to move right
-		if (keys[1])
+		if (gKeys[1])
 		{
-			gGameGrid[xPos][yPos] = ' ';
-			++yPos;
-			if (yPos >= gGridWidth)
+			gGameGrid[g_xPos][g_yPos] = ' ';
+			++g_yPos;
+			if (g_yPos >= gGridWidth)
 			{
-				yPos = gGridWidth - 1;
+				g_yPos = gGridWidth - 1;
 			}
-			gGameGrid[xPos][yPos] = 'A';
-			drawGameGrid();
+			else
+			{
+				gGameGrid[g_xPos][g_yPos] = gSymbol;
+				drawGameGrid();
+			}
 		}
 
 		// want to move down
-		if (keys[2])
+		if (gKeys[2])
 		{
-			gGameGrid[xPos][yPos] = ' ';
-			++xPos;
-			if (xPos >= gGridHeight)
+			gGameGrid[g_xPos][g_yPos] = ' ';
+			++g_xPos;
+			if (g_xPos >= gGridHeight)
 			{
-				xPos = gGridHeight - 1;
+				g_xPos = gGridHeight - 1;
 			}
-			gGameGrid[xPos][yPos] = 'A';
-			drawGameGrid();
+			else
+			{
+				gGameGrid[g_xPos][g_yPos] = gSymbol;
+				drawGameGrid();
+			}
 		}
 
 		// want to move up
-		if (keys[3])
+		if (gKeys[3])
 		{
-			gGameGrid[xPos][yPos] = ' ';
-			--xPos;
-			if (xPos <= 0)
+			gGameGrid[g_xPos][g_yPos] = ' ';
+			--g_xPos;
+			if (g_xPos < 0)
 			{
-				xPos = 0;
+				g_xPos = 0;
 			}
-			gGameGrid[xPos][yPos] = 'A';
-			drawGameGrid();
+			else
+			{
+				gGameGrid[g_xPos][g_yPos] = gSymbol;
+				drawGameGrid();
+			}
 		}
 
 		// want to quit game loop
-		if (keys[4])
+		if (gKeys[4])
 		{
-			gameover = true;
+			gGameover = true;
 		}
 	}
 
+	_getch();
 	return 0;
 }
 
